@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../lib/api';
 import {
   Card,
   CardContent,
@@ -13,8 +12,9 @@ import MostLike from './MostLike';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Navbar from './Navbar';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 import Footer from './Footer';
+import { fetchRecommendedPosts } from '../lib/api/post';
 
 interface Post {
   id: string;
@@ -24,7 +24,7 @@ interface Post {
   tags: string[];
   className?: string;
   comments?: number;
-  imageUrl?: string;
+  imageUrl?: string ;
   author?: {
     id: string;
     name: string;
@@ -34,15 +34,15 @@ interface Post {
 }
 
 interface DataResponse {
-  data: Post[];
+  data: Post;
   total: number;
   page: number;
   lastPage: number;
 }
 
-function HomePage() {
+const HomePage = () => {
   const [page, setPage] = useState(0);
-  const limit = 5;
+  const [limit] = useState(2);
   const { user } = useAuth();
 
   const User = user || {
@@ -50,29 +50,25 @@ function HomePage() {
     avatarUrl: '/images/avatar.png', // Default avatar for guest
   };
 
-  const handlePageClick = (selectedItem: { selected: number }) => {
-    console.log('Page clicked:', selectedItem.selected);
-    setPage(selectedItem.selected);
-  };
-
+    
   const {
     data = { data: [], total: 0 },
     isLoading,
     error,
   } = useQuery<DataResponse>({
-    queryKey: ['recommended-posts', page],
+    queryKey: ['recommended', page],
     queryFn: async () => {
-      const res = await api.get(
-        `/posts/recommended?limit=${limit}&page=${page + 1}`
-      );
-      return res.data as DataResponse;
+      const res = await fetchRecommendedPosts(limit, page);
+      console.log('Recommended posts data:', res);
+      return res;
     },
+    
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
     retryDelay: 1000,
   });
-
+  
   if (isLoading) {
     return (
       <div className='p-4 space-y-4'>
@@ -82,10 +78,16 @@ function HomePage() {
       </div>
     );
   }
-
+  
   if (error) {
+    console.error('Error fetching recommended posts:', error);
     return <div className='p-4 text-red-500'>Gagal memuat postingan.</div>;
   }
+  
+  const handlePageClick = (selectedItem: { selected: number }) => {
+    console.log('Page clicked:', selectedItem.selected);
+    setPage(selectedItem.selected);
+  };
 
   return (
     <>
@@ -96,14 +98,15 @@ function HomePage() {
             <h1 className='mt-6 mb-4 md:display-sm-bold text-xl-bold text-neutral-900 md:mt-12'>
               Recommended For You
             </h1>
-            {Array.isArray(data.data)
-              ? data.data.map((post) => (
-                  <Card
+            {Array.isArray(data) && data.length > 0
+              ? data?.map((post) => (
+               
+                                    <Card
                     key={post.id}
                     className='flex flex-row w-full border-b-2 last:border-b-0'
                   >
                     <img
-                      src='/images/image.png'
+                      src={post.imageUrl || '/images/image.png'}
                       width={340}
                       height={208}
                       className='hidden rounded-sm md:block md:py-4'
@@ -167,19 +170,15 @@ function HomePage() {
               : null}
 
             <div className='flex justify-center mt-6'>
-              {data?.data.length === 0 && (
-                <p className='mt-4 text-center text-gray-500'>
-                  Tidak ada data di halaman ini.
-                </p>
-              )}
+              
               <ReactPaginate
                 forcePage={page}
                 breakLabel='...'
                 nextLabel=' Next >'
                 onPageChange={handlePageClick}
-                pageRangeDisplayed={3}
-                marginPagesDisplayed={1}
-                pageCount={(data as DataResponse)?.lastPage || 1}
+                pageRangeDisplayed={5}
+                marginPagesDisplayed={3}
+                pageCount={data?.total ? Math.ceil(data.total / limit) : 1}
                 previousLabel='< Previous'
                 containerClassName='flex items-center gap-2'
                 pageClassName=' px-3 py-1  text-neutral-900  text-sm-regular'
@@ -210,3 +209,5 @@ function HomePage() {
 }
 
 export default HomePage;
+
+

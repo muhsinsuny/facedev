@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../lib/api';
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import {
   CardTitle,
 } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
+import { fetchMostLikedPosts } from '../lib/api/post';
 
 interface Post {
   id: string;
@@ -28,17 +28,16 @@ function MostLike() {
   const { data, isLoading, error } = useQuery<Post[]>({
     queryKey: ['most-liked'],
     queryFn: async () => {
-      const res = await api.get('/posts/most-liked?limit=10&page=1');
-      console.log('API response:', res.data);
-      return res.data.data;
+      const res = await fetchMostLikedPosts(1,5);
+      return res.data;
     },
   });
 
   if (isLoading) {
     return (
-      <div className='space-y-4 p-4'>
+      <div className='p-4 space-y-4'>
         {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className='h-24 w-full rounded-xl' />
+          <Skeleton key={i} className='w-full h-24 rounded-xl' />
         ))}
       </div>
     );
@@ -50,7 +49,7 @@ function MostLike() {
 
   return (
     <div>
-      <h2 className='md:text-display-xs custom-container mb-5 font-bold'>
+      <h2 className='mb-5 font-bold md:text-display-xs custom-container'>
         Most Liked
       </h2>
       <div className='flex-col space-y-4 md:w-full'>
@@ -58,20 +57,20 @@ function MostLike() {
           ? data.map((post) => (
               <Card
                 key={post.id}
-                className='flex flex-row border-b-2 py-2 last:border-b-0'
+                className='flex flex-row py-2 border-b-2 last:border-b-0'
               >
-                <div className='flex flex-1 flex-col md:block'>
+                <div className='flex flex-col flex-1 md:block'>
                   <CardHeader className='flex flex-col items-start'>
-                    <CardTitle className='text-md mb-1 flex flex-col font-bold md:text-xl'>
+                    <CardTitle className='flex flex-col mb-1 font-bold text-md md:text-xl'>
                       {post.title}
                     </CardTitle>
-                    <CardDescription className='text-sm-regular mb-4 text-gray-500'>
+                    <CardDescription className='mb-4 text-gray-500 text-sm-regular'>
                       {post.content.slice(0, 100)}...
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className='mb-4 flex flex-1 flex-row items-center gap-4'></CardContent>
-                  <CardFooter className='mb-4 flex-row items-center justify-start gap-4'>
-                    <p className='text-xs-regular flex items-center gap-2 text-neutral-600 md:text-sm'>
+                  <CardContent className='flex flex-row items-center flex-1 gap-4 mb-4'></CardContent>
+                  <CardFooter className='flex-row items-center justify-start gap-4 mb-4'>
+                    <p className='flex items-center gap-2 text-xs-regular text-neutral-600 md:text-sm'>
                       <span role='img' aria-label='likes' className='mr-1'>
                         <img src='/icons/like.svg' />
                       </span>{' '}

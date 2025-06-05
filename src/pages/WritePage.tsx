@@ -5,14 +5,16 @@ import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
 import WritePostNavbar from './WritePostNavbar';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 
 export default function WritePage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const { token } = useAuth();
+  const auth = useAuth();
+  const token = auth?.token;
+  const User = auth?.user;
 
   if (!token) {
     return (
@@ -21,6 +23,7 @@ export default function WritePage() {
       </div>
     );
   }
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,14 +52,16 @@ export default function WritePage() {
   return (
     <>
       <WritePostNavbar />
-      <div className='max-w-3xl py-10 mx-auto space-y-6'>
+      {User && (
+
+        <div className='max-w-3xl py-10 mx-auto space-y-6'>
         <div>
           <Label htmlFor='title'>Title</Label>
           <Input
             id='title'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-          />
+            />
         </div>
 
         <div>
@@ -90,13 +95,14 @@ export default function WritePage() {
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder='e.g. react, typescript'
-          />
+            />
         </div>
 
         <Button className='w-full' onClick={handleSubmit}>
           Finish
         </Button>
       </div>
+          )}
     </>
   );
 }

@@ -1,40 +1,38 @@
 // src/lib/api/user.ts
 import { api } from './index';
 
-// pakai fetch (seperti sebelumnya)
-export const getProfile = async () => {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`${api.defaults.baseURL}api/users/profile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
 
-  if (!res.ok) throw new Error('Unauthorized');
-  return res.json();
+// ambil profile user
+export const getProfile = async () => {
+  const res = await api.get(`/users/profile`);
+
+  return res.data;
 };
 
-// pakai axios (opsional jika mau seragam pakai axios)
+// update profile user
+
 export const updateUserProfile = async (
-  token: string,
   data: Partial<{ name: string; email: string; avatar?: string }>
 ) => {
-  const res = await api.patch('/api/users/profile', data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await api.patch('/users/profile', data);
+
   return res.data;
 };
 
+// update password user
+
 export const updateUserPassword = async (
-  token: string,
   data: { oldPassword: string; newPassword: string }
 ) => {
-  const res = await api.patch('/api/users/password', data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await api.patch('/users/password', data);
+
   return res.data;
 };
+
+// delete user account
+export const deleteUserAccount = async () => {
+  const res = await api.delete('/users/delete');
+
+  return res.data;
+};
+

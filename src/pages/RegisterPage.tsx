@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Input } from '../components/ui/input';
 import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { registerUser } from '../lib/api/auth';
 import { Eye, EyeOff } from 'lucide-react';
 
 // 💡 Zod schema untuk validasi register
@@ -25,7 +25,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { register: registerUser } = useAuth();
+  // const  registerUser  = useAuth();
   const [submitError, setSubmitError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 

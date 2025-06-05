@@ -4,25 +4,36 @@ import { useMutation } from '@tanstack/react-query';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { useAuth } from '../hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react';
+import { loginUser } from '../lib/api/auth';
+import {useAuth} from '../context/AuthContext'
+
 
 export default function LoginPage() {
-  const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
   const loginMutation = useMutation({
     mutationFn: async () => {
-      await login(email, password);
+      await loginUser( email, password );
+      // After successful login, you might want to fetch user data or token
+      const user = await loginUser(email, password);
+      login(user);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', user.token);
+      return user;
     },
 
     onSuccess: () => {
       navigate('/');
     },
   });
+
+
+  
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-100 custom-container'>

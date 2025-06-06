@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '../../facedev/src/components/layout/theme-provider';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
@@ -11,6 +10,7 @@ import ProtectedRoute from './pages/ProtectedRoute';
 import WritePage from './pages/WritePage';
 import RegisterPage from './pages/RegisterPage';
 import SearchPage from './pages/SearchPage';
+import { ThemeProvider } from './components/layout/theme-provider';
 
 const queryClient = new QueryClient();
 

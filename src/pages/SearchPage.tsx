@@ -11,6 +11,7 @@ import {
 } from '../components/ui/card';
 import { api } from '../lib/api';
 import { SearchBox } from './SearchBox';
+import Footer from './Footer';
 
 interface Post {
   id: string;
@@ -42,20 +43,41 @@ export default function SearchPage() {
     <>
       <Navbar />
       <div className='custom-container'>
-        <div className='max-w-4xl py-6 mx-auto'>
-          <h1 className='hidden mb-6 text-2xl font-bold md:display-xl-bold md:block'>
-            Search results for:{' '}
-            <span className='text-blue-600'>{`"${query}"`}</span>
-          </h1>
+        <div className='max-w-4xl py-6 '>
 
           {isLoading && <p>Loading...</p>}
           {isError && <p className='text-red-500'>Failed to load results.</p>}
 
-          {data?.length === 0 && <p>No posts found.</p>}
-
-          <div className='flex items-center justify-center w-full custom-container md:hidden'>
-            <SearchBox className='w-full' />
+          <div className='flex items-center justify-center w-full mb-4 md:hidden'>
+            <SearchBox  />
           </div>
+          {data?.length === 0 && 
+          <div className='md:max-w-auto md:px-0'>
+
+          <div className='flex flex-col items-center justify-center w-full h-64 mt-33 '>
+            <img src='/icons/blank-doc.png' alt='No results' className='mb-4 w-[118px] h-[135px]' />
+            <p className='mt-6 text-sm font-semibold text-neutral-950'>No results found</p>
+            <p className='mb-6 text-neutral-950 text-sm-regular'>Try using a different keyword</p>
+            <button
+              onClick={() => window.location.href = '/'}
+              type='button'
+              className='py-2 mt-4 text-white transition-colors duration-200 rounded-full text-sm-semibold px-14 bg-primary-300 hover:bg-primary-200 hover:text-black hover:cursor-pointer'
+              >
+              Back to Home
+            </button>
+
+              </div>
+          </div>
+          }
+          {data?.length > 0 &&
+          <>
+
+            <h1 className='hidden mb-6 text-2xl font-bold md:display-xl-bold md:block'>
+            Search results for:{' '}
+            <span className='text-primary-300'>{`"${query}"`}</span>
+          </h1>
+
+
 
           <ul className='space-y-4'>
             {Array.isArray(data) && data.length > 0
@@ -101,7 +123,7 @@ export default function SearchPage() {
                           width={40}
                           height={40}
                           className='hidden md:block'
-                        />
+                          />
                         {/* {post.author?.avatarUrl}{' '} */}
                         <p className='md:text-sm-medium text-xs-text-xs-regular text-neutral-900'>
                           {post.author?.name}{' '}
@@ -126,9 +148,12 @@ export default function SearchPage() {
                     </div>
                   </Card>
                 ))
-              : null}
+                : null}
           </ul>
+                </>
+      }
         </div>
+        <Footer />
       </div>
     </>
   );

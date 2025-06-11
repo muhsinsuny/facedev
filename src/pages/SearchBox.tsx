@@ -49,12 +49,12 @@ export const SearchBox: React.FC<SearchBoxProps> = () => {
   };
 
   return (
-    <div className='custom-container relative w-full md:w-[377px]'>
+    <div className='relative w-full max-w-md custom-container'>
       <form onSubmit={handleSubmit} className='flex items-center w-full'>
         <CiSearch />
         <input
           type='text'
-          placeholder='Search '
+          placeholder='Search'
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className='w-full px-8 py-1 -translate-x-6 border rounded-md text-sm-regular text-neutral-500'

@@ -9,12 +9,16 @@ import {
 } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
 import MostLike from './MostLike';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
 import Footer from './Footer';
 import { fetchRecommendedPosts } from '../lib/api/post';
+import { useNavigate, useParams } from 'react-router-dom';
+import LikeButton from './partials/LikeButton';
+import { usePostDetail } from '../hooks/usePostDetail';
+import { api } from '../lib/api';
 
 interface Post {
   id: string;
@@ -24,7 +28,8 @@ interface Post {
   tags: string[];
   className?: string;
   comments?: number;
-  imageUrl?: string ;
+  likedByCurrentUser: boolean;
+  imageUrl?: string;
   author?: {
     id: string;
     name: string;
@@ -34,7 +39,7 @@ interface Post {
 }
 
 interface DataResponse {
-  data: Post;
+  data: Post[];
   total: number;
   page: number;
   lastPage: number;
@@ -42,15 +47,26 @@ interface DataResponse {
 
 const HomePage = () => {
   const [page, setPage] = useState(0);
-  const [limit] = useState(2);
+  const [limit] = useState(5);
   const { user } = useAuth();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { refetch } = usePostDetail(id!);
+  const [currentPost, setCurrentPost] = useState<Post | null>(null);
 
   const User = user || {
     name: 'Guest',
     avatarUrl: '/images/avatar.png', // Default avatar for guest
   };
 
-    
+  useEffect(() => {
+    const fetchPost = async () => {
+      const res = await api.get(`/posts/${id}/likes`);
+      setCurrentPost(res.data);
+    };
+    fetchPost();
+  }, [id]);
+
   const {
     data = { data: [], total: 0 },
     isLoading,
@@ -62,13 +78,13 @@ const HomePage = () => {
       console.log('Recommended posts data:', res);
       return res;
     },
-    
+
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
     retryDelay: 1000,
   });
-  
+
   if (isLoading) {
     return (
       <div className='p-4 space-y-4'>
@@ -78,12 +94,12 @@ const HomePage = () => {
       </div>
     );
   }
-  
+
   if (error) {
     console.error('Error fetching recommended posts:', error);
     return <div className='p-4 text-red-500'>Gagal memuat postingan.</div>;
   }
-  
+
   const handlePageClick = (selectedItem: { selected: number }) => {
     console.log('Page clicked:', selectedItem.selected);
     setPage(selectedItem.selected);
@@ -98,10 +114,9 @@ const HomePage = () => {
             <h1 className='mt-6 mb-4 md:display-sm-bold text-xl-bold text-neutral-900 md:mt-12'>
               Recommended For You
             </h1>
-            {Array.isArray(data) && data.length > 0
-              ? data?.map((post) => (
-               
-                                    <Card
+            {Array.isArray(data.data) && data.data.length > 0
+              ? data?.data.map((post) => (
+                  <Card
                     key={post.id}
                     className='flex flex-row w-full border-b-2 last:border-b-0'
                   >
@@ -113,7 +128,14 @@ const HomePage = () => {
                     />
                     <div className='flex flex-col flex-1 md:block'>
                       <CardHeader className='flex flex-col items-start'>
-                        <CardTitle className='flex flex-col mb-3 font-bold text-md-bold text-md text-neutral-900 md:text-xl'>
+                        <CardTitle
+                          className='flex flex-col mb-3 font-bold cursor-pointer text-md-bold text-md text-neutral-900 md:text-xl'
+                          onClick={() => {
+                            if (user?.id !== post.author?.id) {
+                              return navigate(`/detail/${post.id}`);
+                            } else navigate(`/update-post/${post.id}`);
+                          }}
+                        >
                           {post.title}
                           <div className='flex flex-row w-full h-full gap-4 mt-3 text-xs-regular text-neutral-900'>
                             {post.tags
@@ -153,12 +175,18 @@ const HomePage = () => {
                         </p>
                       </CardContent>
                       <CardFooter className='flex-row items-center justify-start gap-4 mb-4'>
-                        <p className='flex items-center gap-2 text-xs-regular text-neutral-600 md:text-sm'>
+                        <LikeButton
+                          postId={id!}
+                          initialLiked={post.likedByCurrentUser}
+                          initialCount={post.likes}
+                          onLikeChange={() => refetch()}
+                        />
+                        {/* <p className='flex items-center gap-2 text-xs-regular text-neutral-600 md:text-sm'>
                           <span role='img' aria-label='likes' className='mr-1'>
                             <img src='/icons/like.svg' />
                           </span>{' '}
                           {post.likes}
-                        </p>
+                        </p> */}
                         <p className='flex items-center gap-2 text-sm text-gray-500'>
                           <img src='/icons/comment.svg' />
                           {post.comments}
@@ -170,7 +198,6 @@ const HomePage = () => {
               : null}
 
             <div className='flex justify-center mt-6'>
-              
               <ReactPaginate
                 forcePage={page}
                 breakLabel='...'
@@ -206,8 +233,6 @@ const HomePage = () => {
       </div>
     </>
   );
-}
+};
 
 export default HomePage;
-
-

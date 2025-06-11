@@ -23,7 +23,7 @@ export default function WritePostNavbar() {
             alt='avatar'
             className='w-8 h-8 rounded-full'
           />
-          <span className='text-sm'>{user.name}</span>
+          <span className='hidden text-sm md:block'>{user.name}</span>
         </div>
       )}
     </nav>

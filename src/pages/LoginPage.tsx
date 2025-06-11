@@ -5,9 +5,9 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Eye, EyeOff } from 'lucide-react';
-import { loginUser } from '../lib/api/auth';
-import {useAuth} from '../context/AuthContext'
-
+import { getUserByEmail, loginUser } from '../lib/api/auth';
+import { useAuth } from '../context/AuthContext';
+import { jwtDecode } from 'jwt-decode';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -18,22 +18,24 @@ export default function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: async () => {
-      await loginUser( email, password );
-      // After successful login, you might want to fetch user data or token
-      const user = await loginUser(email, password);
-      login(user);
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', user.token);
-      return user;
+      const tokenResponse = await loginUser(email, password);
+      const decode: { email: string } = jwtDecode(tokenResponse.token);
+      const userProfile = await getUserByEmail(decode.email);
+      const userData = {
+        token: tokenResponse.token,
+        user: userProfile,
+      };
+
+      login(userData);
+      localStorage.setItem('user', JSON.stringify(userProfile));
+      localStorage.setItem('token', tokenResponse.token);
+      return userData;
     },
 
     onSuccess: () => {
       navigate('/');
     },
   });
-
-
-  
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-100 custom-container'>

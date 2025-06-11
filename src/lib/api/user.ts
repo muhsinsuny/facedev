@@ -12,7 +12,7 @@ export const getProfile = async () => {
 // update profile user
 
 export const updateUserProfile = async (
-  data: Partial<{ name: string; email: string; avatar?: string }>
+  data: Partial<{ name: string; headline: string; avatar?: string }>
 ) => {
   const res = await api.patch('/users/profile', data);
 
@@ -22,7 +22,7 @@ export const updateUserProfile = async (
 // update password user
 
 export const updateUserPassword = async (
-  data: { oldPassword: string; newPassword: string }
+  data: { currentPassword: string; newPassword: string; confirmPassword: string }
 ) => {
   const res = await api.patch('/users/password', data);
 

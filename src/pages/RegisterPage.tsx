@@ -25,7 +25,6 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  // const  registerUser  = useAuth();
   const [submitError, setSubmitError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 

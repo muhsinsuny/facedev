@@ -11,6 +11,10 @@ import WritePage from './pages/WritePage';
 import RegisterPage from './pages/RegisterPage';
 import SearchPage from './pages/SearchPage';
 import { ThemeProvider } from './components/layout/theme-provider';
+import DetailPost from './pages/DetailPost';
+import ProfileUpdate from './pages/ProfileUpdate';
+import ProfileEdit from './pages/EditProfile';
+import UpdatePost from './pages/UpdatePost';
 
 const queryClient = new QueryClient();
 
@@ -30,10 +34,29 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path='/update-post/:id'
+              element={
+                <ProtectedRoute>
+                  <UpdatePost />
+                </ProtectedRoute>
+              }
+            />
             <Route path='/register' element={<RegisterPage />} />
             <Route path='/search' element={<SearchPage />} />
+            <Route path='/detail/:id' element={<DetailPost />} />
 
-            {/* <Route path='/profile' element={<ProfilePage />} /> */}
+            <Route path='/profile' element={<ProfileUpdate />} />
+            {/* <Route path='/profileedit' element={<ProfileEdit />} /> */}
+            <Route
+              path='/profileedit'
+              element={
+                <ProfileEdit
+                  open={true}
+                  onOpenChange={() => console.log('Open change')}
+                />
+              }
+            />
           </Routes>
         </Router>
         <Toaster position='top-right' />

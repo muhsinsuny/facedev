@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { SearchBox } from './SearchBox';
+import { SearchBox } from '../partials/SearchBox';
 import { CiSearch } from 'react-icons/ci';
 import { Menu } from 'lucide-react';
 import React from 'react';
@@ -8,9 +8,9 @@ import {
   SheetContent,
   SheetHeader,
   SheetTrigger,
-} from '../components/ui/sheet';
-import { UserDropdown } from './UserDropdown';
-import { useAuth } from '../context/AuthContext';
+} from '../../components/ui/sheet';
+import { UserDropdown } from '../partials/UserDropdown';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
   const { user } = useAuth();

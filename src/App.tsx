@@ -14,7 +14,7 @@ import { ThemeProvider } from './components/layout/theme-provider';
 import DetailPost from './pages/DetailPost';
 import ProfileUpdate from './pages/ProfileUpdate';
 import ProfileEdit from './pages/EditProfile';
-import UpdatePost from './pages/UpdatePost';
+import UpdatePost from './pages/partials/UpdatePost';
 
 const queryClient = new QueryClient();
 

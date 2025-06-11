@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useNavigate } from 'react-router-dom';
 import { CiSearch } from 'react-icons/ci';
-import { api } from '../lib/api';
+import { api } from '../../lib/api';
 
 interface SearchBoxProps {
   className?: string;

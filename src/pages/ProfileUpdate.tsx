@@ -1,13 +1,13 @@
 import { useAuth } from '../context/AuthContext';
-import Navbar from './Navbar';
+import Navbar from './partials/Navbar';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '../components/ui/tabs';
-import YourPosts from './YourPost';
-import ChangePasswordForm from './ChangePasswordForm';
+import YourPosts from './partials/YourPost';
+import ChangePasswordForm from './partials/ChangePasswordForm';
 import { useState } from 'react';
 import ProfileEdit from './EditProfile';
 import { useNavigate } from 'react-router-dom';

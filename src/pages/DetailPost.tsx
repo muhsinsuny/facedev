@@ -4,9 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Textarea } from '../components/ui/textarea';
 import { api } from '../lib/api';
 import { usePostDetail } from '../hooks/usePostDetail';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import CommentModal from './CommentModal';
+import Navbar from './/partials/Navbar';
+import Footer from './partials/Footer';
+import CommentModal from './partials/CommentModal';
 import LikeButton from '../pages/partials/LikeButton';
 import {
   Card,

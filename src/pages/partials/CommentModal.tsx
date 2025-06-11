@@ -6,14 +6,14 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '../components/ui/dialog';
-import { Button } from '../components/ui/button';
-import { Textarea } from '../components/ui/textarea';
-import { useAuth } from '../context/AuthContext';
+} from '../../components/ui/dialog';
+import { Button } from '../../components/ui/button';
+import { Textarea } from '../../components/ui/textarea';
+import { useAuth } from '../../context/AuthContext';
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import { api } from '../lib/api';
+import { api } from '../../lib/api';
 
 interface Comment {
   id: string;
@@ -69,14 +69,14 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
                 See All Comments
               </Button>
             </DialogTrigger>
-            <DialogContent className='max-w-md text-md-bold text-neutral-950'>
+            <DialogContent className='text-md-bold max-w-md text-neutral-950'>
               <DialogTitle>Comments({comments.length})</DialogTitle>
-              <DialogDescription className='mb-2 text-sm-semibold text-neutral-950'>
+              <DialogDescription className='text-sm-semibold mb-2 text-neutral-950'>
                 Give your comments
               </DialogDescription>
 
               <Textarea
-                className='w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none'
+                className='w-full rounded-md border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
                 placeholder='Enter your comments'
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
@@ -85,26 +85,26 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
               <DialogFooter>
                 <Button
                   onClick={handleSubmit}
-                  className='text-white bg-primary-300 hover:bg-primary-200 hover:cursor-pointer hover:text-black'
+                  className='bg-primary-300 hover:bg-primary-200 text-white hover:cursor-pointer hover:text-black'
                 >
                   Send
                 </Button>
               </DialogFooter>
 
-              <h3 className='mb-2 font-medium text-md'>All comments :</h3>
-              <div className='overflow-y-auto max-h-40'>
+              <h3 className='text-md mb-2 font-medium'>All comments :</h3>
+              <div className='max-h-40 overflow-y-auto'>
                 {comments.length > 0 ? (
                   comments.map((comment: Comment, index: number) => (
                     <>
                       <div
                         key={index}
-                        className='flex items-center justify-between p-2 border-b'
+                        className='flex items-center justify-between border-b p-2'
                       >
                         <div className='flex items-center'>
                           <img
                             src={comments.author?.avatarUrl}
                             alt={comments.author?.name}
-                            className='w-8 h-8 mr-2 rounded-full'
+                            className='mr-2 h-8 w-8 rounded-full'
                           />
                           <div>
                             <p className='font-semibold'>
@@ -116,7 +116,7 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
                           </div>
                         </div>
                       </div>
-                      <div key={index} className='p-2 border-b'>
+                      <div key={index} className='border-b p-2'>
                         {comment.content}
                       </div>
                     </>

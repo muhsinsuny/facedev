@@ -11,14 +11,13 @@ import { Skeleton } from '../components/ui/skeleton';
 import MostLike from './MostLike';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import Navbar from './Navbar';
+import Navbar from './partials/Navbar';
 import { useAuth } from '../context/AuthContext';
-import Footer from './Footer';
+import Footer from './partials/Footer';
 import { fetchRecommendedPosts } from '../lib/api/post';
 import { useNavigate, useParams } from 'react-router-dom';
 import LikeButton from './partials/LikeButton';
 import { usePostDetail } from '../hooks/usePostDetail';
-// import { api } from '../lib/api';
 
 interface Post {
   id: string;

@@ -1,77 +1,93 @@
-import { useState } from 'react';
+// src/pages/UpdatePost.tsx
+import { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { Label } from '../components/ui/label';
-import WritePostNavbar from './partials/WritePostNavbar';
-import { useAuth } from '../context/AuthContext';
-import Footer from './partials/Footer';
-import { createPost } from '../lib/api/post';
-import { useNavigate } from 'react-router-dom';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import { Label } from '../../components/ui/label';
+import WritePostNavbar from '../partials/WritePostNavbar';
+import Footer from './Footer';
+import { useAuth } from '../../context/AuthContext';
+import { fetchPostDetail, updatePost } from '../../lib/api/post';
 
-export default function WritePage() {
+export default function UpdatePost() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
-  // const [image] = useState<File | null>(null);
+  const [image, setImage] = useState<File | string>('');
+  const [imageUrl, setImageUrl] = useState<string>('');
   const auth = useAuth();
   const token = auth?.token;
-  const User = auth?.user;
-  const [image, setImage] = useState<File | string>('');
-  const [imageUrl] = useState(
-    image instanceof File ? URL.createObjectURL(image) : image
-  );
+  const user = auth?.user;
+
+  // Ref to access editor instance
+  const editorRef = useRef<typeof SunEditor | null>(null);
+  useEffect(() => {
+    const getPost = async () => {
+      try {
+        if (id) {
+          const data = await fetchPostDetail(id);
+          setTitle(data.title);
+          setContent(data.content); // Set state
+          setTags(data.tags.join(', '));
+          setImage(data.image);
+          setImageUrl(data.image);
+
+          // Set editor content
+          if (editorRef.current) {
+            setContent(data.content);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch post detail:', err);
+      }
+    };
+    getPost();
+  }, [id]);
 
   if (!token) {
     return (
       <div className='flex items-center justify-center min-h-screen bg-gray-100'>
-        <p className='text-lg'>You must be logged in to write a post.</p>
+        <p className='text-lg'>You must be logged in to update a post.</p>
       </div>
     );
   }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setImage(file);
+    if (file) {
+      setImage(file);
+      setImageUrl(URL.createObjectURL(file));
+    }
   };
 
-  const handleSubmit = () => {
-    console.log({
-      title,
-      content,
-      tags: tags.split(',').map((t) => t.trim()),
-      image,
-    });
+  const handleSubmit = async () => {
+    if (!user || !id) return;
 
-    actionFetchPost();
-  };
-
-  const actionFetchPost = async () => {
     try {
-      if (!(image instanceof File)) {
-        alert('Please upload a valid image file.');
-        return;
-      }
+      const finalImage = image instanceof File ? undefined : image;
 
-      const response = await createPost(
+      await updatePost(
+        parseInt(id),
         title,
         content,
-        tags.split(','),
-        image // langsung File, bukan URL
+        tags.split(',').map((t) => t.trim()),
+        finalImage
       );
-      console.log(response);
+
       navigate('/');
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error('Failed to update post:', err);
     }
   };
 
   return (
     <>
       <WritePostNavbar />
-      {User && (
+      {user && (
         <div className='custom-container'>
           <div className='max-w-3xl py-10 mx-auto space-y-6'>
             <div>
@@ -80,9 +96,7 @@ export default function WritePage() {
               </Label>
               <Input
                 id='title'
-                placeholder='Enter your title'
                 value={title}
-                className='text-sm-regular text-neutral-500'
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
@@ -92,10 +106,8 @@ export default function WritePage() {
                 Content
               </Label>
               <SunEditor
+                key={content}
                 setOptions={{
-                  placeholder: 'Enter your content',
-                  className:
-                    'text-sm-regular text-neutral-500 w-fill h-[186px]',
                   height: '300',
                   buttonList: [
                     ['undo', 'redo'],
@@ -107,23 +119,20 @@ export default function WritePage() {
                     ['fullScreen', 'codeView'],
                   ],
                 }}
-                setContents={content}
+                defaultValue={content}
                 onChange={(value) => {
-                  // const trimmedValue = value.trim().replace(/^['"]|['"]$/g, '');
-                  const removeTags = value.replace(/<\/?p[^>]*>/g, '');
-
-                  setContent(removeTags);
+                  // Optional: remove unwanted <p> tags
+                  const cleaned = value.replace(/<\/?p[^>]*>/g, '');
+                  setContent(cleaned);
                 }}
               />
             </div>
 
             <div>
-              <Label className='mb-2'>Cover Image</Label>
+              <Label className='mb-2'>Image</Label>
               <Input
                 type='file'
                 accept='image/*'
-                height={'140px'}
-                placeholder='click to upload or drag and drop'
                 onChange={handleImageUpload}
               />
               {imageUrl && (
@@ -140,15 +149,16 @@ export default function WritePage() {
               <Input
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                placeholder='Enter your tags e.g. react, typescript'
+                placeholder='e.g. react, typescript'
               />
             </div>
+
             <div className='flex justify-end'>
               <Button
-                className='bg-primary-300 hover:bg-primary-200 right-0 w-full cursor-pointer rounded-full text-white hover:text-black md:h-[44px] md:w-[265px]'
+                className='bg-primary-300 hover:bg-primary-200 right-0 h-[44px] w-full cursor-pointer rounded-full text-white hover:text-black md:w-[265px]'
                 onClick={handleSubmit}
               >
-                Finish
+                Save
               </Button>
             </div>
           </div>

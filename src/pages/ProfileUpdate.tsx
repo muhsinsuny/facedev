@@ -16,59 +16,12 @@ const ProfileUpdate = () => {
   const { user } = useAuth();
   const [openEditProfile, setOpenEditProfile] = useState(false);
   const Navigate = useNavigate();
-  // const queryClient = useQueryClient(); // Ubah ke email user aktif (misal dari auth context)
-  // const [formData] = useState<UserProfile | null>(null);
-  // const email = user?.email;
 
-  // const { data: posts, isLoading } = useQuery({
-  //     queryKey: ['posts'],
-  //     queryFn: async () => {
-  //       const res = await api.get('/posts');
-  //       return res.data;
-  //     },
-  //   })
+  const User = user || {
+    name: 'Guest',
+    avatarUrl: '/images/avatar.png', // Default avatar for guest
+  };
 
-  // Fetch user profile by email
-  // const { data: userProfile, isLoading } = useQuery({
-  //   queryKey: ['user', email],
-  //   queryFn: async () => {
-  //     const res = await api.get(`/users/${email}`);
-  //     console.log('User profile:', res.data.data);
-  //     return res.data.data;
-  //   },
-  //   enabled: !!email, // hanya fetch jika email ada
-  // });
-
-  // useEffect(() => {
-  //   if (userProfile) {
-  //     setFormData(userProfile);
-  //   }
-  // }, [userProfile]);
-
-  // Update profile mutation
-  // const updateProfile = useMutation({
-  //   mutationFn: async (updatedData: UserProfile) => {
-  //     return await api.patch(`/users/${email}`, updatedData);
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ['user', email] });
-  //     alert('Profile updated!');
-  //   },
-  // });
-
-  // if (isLoading) return <p>Loading profile...</p>;
-
-  // if(!posts || posts.length ===0) {
-  //   return (
-  //   <>
-  //   {/* <p>Loading posts...</p> */}
-  //    <div className="py-10 text-center text-gray-500">
-  //         <p className="text-lg font-medium">You don’t have any posts yet.</p>
-  //         <p className="mt-1 text-sm text-gray-400">Start sharing your thoughts!</p>
-  //       </div>
-  //   </>
-  //       )
-  // }
   return (
     <>
       <Navbar />
@@ -77,7 +30,7 @@ const ProfileUpdate = () => {
           <div className='flex flex-row items-center justify-between p-3 border rounded-xl border-neutral-300'>
             <div className='flex flex-row gap-3'>
               <img
-                src={user?.avatarUrl}
+                src={User?.avatarUrl || '/images/avatar.png'}
                 className='mx-auto h-12.5 w-12.5 rounded-full'
               />
               <div className='flex flex-col flex-start'>
@@ -100,19 +53,6 @@ const ProfileUpdate = () => {
               onOpenChange={() => setOpenEditProfile(false)}
             />
           </div>
-          <div className='relative'>
-            <img
-              className='absolute w-5 h-5 top-1/2 left-1/2 -translate-x-15'
-              src='/icons/pencil-white.png'
-              alt='Write Icon'
-            />
-            <button
-              className='bg-primary-300 hover:bg-primary-200 text-sm-semibold right-0 mt-4 h-[44px] w-full cursor-pointer rounded-full text-white hover:text-black'
-              onClick={() => Navigate('/write')}
-            >
-              Write Post
-            </button>
-          </div>
 
           {/* menu tabs */}
           <Tabs defaultValue='posts' className='w-full max-w-2xl mx-auto mt-8'>
@@ -132,6 +72,20 @@ const ProfileUpdate = () => {
                 Change Password
               </TabsTrigger>
             </TabsList>
+
+            <div className='relative'>
+              <img
+                className='absolute w-5 h-5 top-1/2 left-1/2 -translate-x-15'
+                src='/icons/pencil-white.png'
+                alt='Write Icon'
+              />
+              <button
+                className='bg-primary-300 hover:bg-primary-200 text-sm-semibold right-0 mt-4 h-[44px] w-full cursor-pointer rounded-full text-white hover:text-black'
+                onClick={() => Navigate('/write')}
+              >
+                Write Post
+              </button>
+            </div>
 
             {/* Tab Contents */}
             <TabsContent value='posts' className=''>

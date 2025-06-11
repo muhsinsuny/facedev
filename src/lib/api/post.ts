@@ -1,22 +1,23 @@
 // src/lib/api/post.ts
+import type { QueryFunctionContext } from '@tanstack/react-query';
 import { api } from './index';
 
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  likes: number;
-  tags: string[];
-  className?: string;
-  comments?: number;
-  imageUrl?: string;
-  author?: {
-    id: string;
-    name: string;
-    avatarUrl?: string;
-  };
-  createdAt?: string;
-}
+// interface Post {
+//   id: string;
+//   title: string;
+//   content: string;
+//   likes: number;
+//   tags: string[];
+//   className?: string;
+//   comments?: number;
+//   imageUrl?: string;
+//   author?: {
+//     id: string;
+//     name: string;
+//     avatarUrl?: string;
+//   };
+//   createdAt?: string;
+// }
 
 // ✅ Ambil post list berdasarkan ID
 // export const fetchPosts = async (id: number) => {
@@ -26,25 +27,30 @@ interface Post {
 //   return res.data;
 // };
 
-export const fetchPosts = async (userId: number) => {
-  try {
-    const res = await api.get('/posts'); // Ambil semua post
-    const allPosts = res.data.filter(
-      (post: Post) => post?.author?.id === String(userId)
-    );
-    console.log('All posts:', allPosts);
+export const fetchPosts = async ({ queryKey }: QueryFunctionContext) => {
+  const userId = queryKey[1] as number;
 
-    // Filter post yang dibuat oleh user tertentu
-    const userPosts = allPosts.filter(
-      (post: Post) => post?.author?.id === String(userId)
-    );
-    console.log('Filtered post for User', userId, ':', userPosts);
-
-    return userPosts;
-  } catch (error) {
-    console.error('Error fetching posts:', error);
+  // return await {
+  //   queryKey: ['posts', userId],
+  //   queryFn: async () => {
+  if (userId) {
+    try {
+      const res = await api.get(`/posts/${userId}`);
+      return res.data;
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      return [];
+    }
+  } else {
     return [];
   }
+};
+export const getPost = async (limit: number = 5, page: number) => {
+  const res = await api.get(`/posts/recommended`, {
+    params: { limit, page },
+  });
+  console.log('Recommended posts:', res.data);
+  return res.data.data;
 };
 
 // ✅ Ambil post recommended

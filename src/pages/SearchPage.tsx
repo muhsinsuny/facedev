@@ -12,6 +12,7 @@ import {
 import { api } from '../lib/api';
 import { SearchBox } from './partials/SearchBox';
 import Footer from './partials/Footer';
+import { useNavigate } from 'react-router-dom';
 
 interface Post {
   id: string;
@@ -30,6 +31,7 @@ interface Post {
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query');
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['search', query],
@@ -101,7 +103,21 @@ export default function SearchPage() {
                         <div className='flex flex-col flex-1 md:block'>
                           <CardHeader className='flex flex-col items-start'>
                             <CardTitle className='flex flex-col mb-3 font-bold text-md md:text-xl'>
-                              {post.title}
+                              <span
+                                className='cursor-pointer hover:underline'
+                                onClick={() => {
+                                  navigate(`/detail/${post.id}`);
+                                }}
+                                role='button'
+                                tabIndex={0}
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    navigate(`/detail/${post.id}`);
+                                  }
+                                }}
+                              >
+                                {post.title}
+                              </span>
                               <div className='flex flex-row w-full h-full gap-4 mt-3 text-xs-regular text-neutral-900'>
                                 {post.tags
                                   ?.slice(0, 4)

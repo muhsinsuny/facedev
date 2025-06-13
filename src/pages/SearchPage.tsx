@@ -104,7 +104,7 @@ export default function SearchPage() {
                           <CardHeader className='flex flex-col items-start'>
                             <CardTitle className='flex flex-col mb-3 font-bold text-md md:text-xl'>
                               <span
-                                className='cursor-pointer hover:underline'
+                                className='cursor-pointer hover:text-primary-300 hover:underline'
                                 onClick={() => {
                                   navigate(`/detail/${post.id}`);
                                 }}

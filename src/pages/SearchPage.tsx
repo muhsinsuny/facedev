@@ -20,6 +20,7 @@ interface Post {
   content: string;
   likes: number;
   comments: number;
+  imageUrl?: string;
   author: {
     name: string;
   };
@@ -42,8 +43,8 @@ export default function SearchPage() {
   return (
     <>
       <Navbar />
-      <div className='custom-container'>
-        <div className='max-w-4xl py-6'>
+      <div className='relative min-h-screen custom-container'>
+        <div className='w-full py-6'>
           {isLoading && <p>Loading...</p>}
           {isError && <p className='text-red-500'>Failed to load results.</p>}
 
@@ -89,10 +90,13 @@ export default function SearchPage() {
                         className='flex flex-row w-full py-2 border-b-2 last:border-b-0'
                       >
                         <img
-                          src='/images/image.png'
+                          src={post.imageUrl || '/images/image.png'}
                           width={340}
                           height={208}
                           className='hidden rounded-sm md:block md:py-4'
+                          onError={(e) => {
+                            e.currentTarget.src = '/images/image.png';
+                          }}
                         />
                         <div className='flex flex-col flex-1 md:block'>
                           <CardHeader className='flex flex-col items-start'>
@@ -161,7 +165,7 @@ export default function SearchPage() {
             </>
           )}
         </div>
-        <Footer />
+        <Footer className='absolute bottom-0 w-full' />
       </div>
     </>
   );

@@ -59,7 +59,7 @@ export const fetchRecommendedPosts = async (
   page: number
 ) => {
   if (page < 1) page = 1;
-  const res = await api.get(`/posts/recommended?${limit}&${page}`, {
+  const res = await api.get(`/posts/recommended`, {
     params: { limit, page },
   });
   console.log('Recommended posts:', res.data);
@@ -103,10 +103,21 @@ export const createPost = async (
   return res.data;
 };
 
-// get user post
-export const getUserPosts = async (id: number) => {
-  const res = await api.get(`/posts/${id}`);
-  return res.data;
+// Get My Post
+export const getMyPosts = async (page: number, limit: number) => {
+  try {
+    const res = await api.get(`/posts/my-posts`, {
+      params: { page, limit },
+    });
+
+    console.log('Response from /posts/my-posts:', res.data); // debug
+
+    // Pastikan ini return array, bukan undefined
+    return res.data?.data ?? [];
+  } catch (error) {
+    console.error('Error in getMyPosts:', error);
+    return []; // jangan biarkan return undefined
+  }
 };
 
 // ✅ Update post
@@ -132,9 +143,29 @@ export const deletePost = async (id: number) => {
   return res.data;
 };
 
+// ✅ Ambil post comments
+export const fetchPostComments = async (id: number) => {
+  const res = await api.get(`/posts/${id}/comments`);
+  console.log('FETCH COMMENTS RESPONSE', res.data);
+  return res.data;
+};
+
+// ✅ Ambil post liked
+export const fetchPostLikes = async (id: number) => {
+  const res = await api.get(`/posts/${id}/likes`);
+  console.log('FETCH LIKES RESPONSE', res.data);
+  return res.data;
+};
+
 // ✅ Like post
 export const likePost = async (id: number) => {
   const res = await api.post(`/posts/${id}/like`);
+  return res.data;
+};
+
+// ✅ Unlike post
+export const unlikePost = async (id: number) => {
+  const res = await api.delete(`/posts/${id}/like`);
   return res.data;
 };
 

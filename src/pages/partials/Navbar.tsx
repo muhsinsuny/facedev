@@ -38,7 +38,7 @@ export default function Navbar() {
     if (logout) {
       logout();
     }
-    navigate('/login');
+    navigate('/');
   };
 
   const avatarUrl = user?.avatarUrl || '/images/avatar.png';
@@ -117,7 +117,7 @@ export default function Navbar() {
                       <SheetHeader className='flex flex-col items-start w-full border-b-1 border-neutral-300'>
                         <div className='flex items-center gap-2'>
                           <img
-                            src='icons/F.png'
+                            src='/icons/logo-F.png'
                             alt='logo'
                             className='h-7.5 w-7.5 hover:cursor-pointer'
                           />
@@ -127,7 +127,7 @@ export default function Navbar() {
                         </div>
                       </SheetHeader>
                       <div className='flex flex-col items-center w-full mb-4 text-sm-semibold text-primary-300 hover:underline'>
-                        <Link to='/login' className='mt-4'>
+                        <Link to='/login' className='mt-9.75 mb-4'>
                           Login
                         </Link>
                         <button

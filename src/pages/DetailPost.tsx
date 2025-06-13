@@ -20,18 +20,37 @@ import { useAuth } from '../context/AuthContext';
 
 interface Comment {
   id: string;
-  author?: {
-    name: string;
-  };
-  createdAt: Date;
   content: string;
+  createdAt: Date;
+  author?: {
+    id: string;
+    name: string;
+    avatarUrl: string;
+    headline: string;
+  };
 }
 
 interface Post {
   id: string;
+  // title: string;
+  // content: string;
+  // likes: number;
+  // tags: string;
+  // comments?: string;
   likedByCurrentUser: boolean;
-  likes: number;
-  // other properties...
+  imageUrl?: string;
+  createdAt?: string;
+  author?: {
+    id: string;
+    name: string;
+    headline: string;
+    avatarUrl?: string;
+  };
+  title?: string;
+  content?: string;
+  likes?: number;
+  tags?: string[];
+  comments?: Comment[];
 }
 
 const DetailPost = () => {
@@ -42,7 +61,6 @@ const DetailPost = () => {
 
   const [comment, setComment] = useState('');
   const [showAllComments, setShowAllComments] = useState(false);
-  // const [currentPost, setCurrentPost] = useState<Post | null>(null);
 
   const { data: post, isLoading, error, refetch } = usePostDetail(id!);
 
@@ -69,14 +87,6 @@ const DetailPost = () => {
       (await api.get('/posts/search?query=coding&limit=5&page=1')).data.data ||
       [],
   });
-
-  // useEffect(() => {
-  //   const fetchPost = async () => {
-  //     const res = await api.get(`/posts/${id}/likes`);
-  //     setCurrentPost(res.data);
-  //   };
-  //   fetchPost();
-  // }, [id]);
 
   const anotherPost = allPosts?.filter((p: Post) => p.id !== id)[0];
   const visibleComments =
@@ -151,7 +161,7 @@ const DetailPost = () => {
             <button
               onClick={() => commentMutation.mutate({ content: comment })}
               disabled={!comment || commentMutation.isPending}
-              className='w-full py-2 mt-3 text-white bg-blue-500 rounded-full hover:bg-blue-400'
+              className='w-full py-2 mt-3 text-white rounded-full bg-primary-300 text-sm-semibold hover:bg-primary-200 hover:cursor-pointer hover:text-black'
             >
               {commentMutation.isPending ? 'Sending...' : 'Send'}
             </button>

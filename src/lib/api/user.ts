@@ -1,7 +1,6 @@
 // src/lib/api/user.ts
 import { api } from './index';
 
-
 // ambil profile user
 export const getProfile = async () => {
   const res = await api.get(`/users/profile`);
@@ -12,7 +11,7 @@ export const getProfile = async () => {
 // update profile user
 
 export const updateUserProfile = async (
-  data: Partial<{ name: string; headline: string; avatar?: string }>
+  data: Partial<{ name: string; headline: string; avatarUrl?: string }>
 ) => {
   const res = await api.patch('/users/profile', data);
 
@@ -21,9 +20,11 @@ export const updateUserProfile = async (
 
 // update password user
 
-export const updateUserPassword = async (
-  data: { currentPassword: string; newPassword: string; confirmPassword: string }
-) => {
+export const updateUserPassword = async (data: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}) => {
   const res = await api.patch('/users/password', data);
 
   return res.data;
@@ -35,4 +36,3 @@ export const deleteUserAccount = async () => {
 
   return res.data;
 };
-

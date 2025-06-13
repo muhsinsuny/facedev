@@ -1,0 +1,204 @@
+import { useQuery } from '@tanstack/react-query';
+import { deletePost, getMyPosts } from '../lib/api/post';
+import { useAuth } from '../context/AuthContext';
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import DeleteDialog from './partials/DeleteDialog';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import PostStatistic from './partials/PostStatistic';
+// import { api } from '../lib/api';
+
+interface Post {
+  id: number;
+  title: string;
+  imageUrl?: string;
+  tags: string[];
+  content: string;
+  createdAt?: string;
+  author?: {
+    id: number;
+    name: string;
+    avatarUrl: string;
+  };
+  likes: number;
+}
+
+// interface Comment {
+//   id: string;
+//   content: string;
+//   createdAt: Date;
+//   author?: {
+//     id: number;
+//     name: string;
+//     headline: string;
+//     avatarUrl: string;
+//   };
+// }
+
+export default function YourPosts() {
+  const { user } = useAuth();
+  // const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  // const [isLoading] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState<number | null>(null);
+
+  // const { data: likes } = useQuery({
+  //   queryKey: ['postLikes', postId],
+  //   queryFn: async () => {
+  //     const res = await api.get(`/posts/${postId}/likes`);
+  //     return res.data;
+  //   },
+  //   enabled: !!id,
+  //   refetchOnWindowFocus: false,
+  // });
+  // console.log('likes', likes);
+  // console.log('postId in dialog:', id);
+
+  // const { data: comments } = useQuery({
+  //   queryKey: ['comments', id],
+  //   queryFn: async () => {
+  //     const res = await api.get(`/posts/${id}/comments`);
+  //     return res.data;
+  //   },
+  //   enabled: !!id,
+  //   refetchOnWindowFocus: false,
+  // });
+  // console.log('comments', comments);
+
+  const {
+    data: myPosts = [],
+    // isLoading,
+    isError,
+    error,
+  } = useQuery<Post[]>({
+    queryKey: ['my-posts'],
+    queryFn: () => getMyPosts(1, 10), // Sudah mengembalikan array
+    enabled: !!user,
+    refetchOnWindowFocus: false,
+  });
+
+  // if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error: {(error as Error).message}</p>;
+
+  return (
+    <div className='relative custom-container'>
+      <div className='max-w-2xl'>
+        <div className='md:flex md:items-center md:justify-between'>
+          <h3 className='mt-4 text-lg-bold text-neutral-900'>
+            {myPosts.length} Post{myPosts.length !== 1 && 's'}
+          </h3>
+          <div className='relative hidden md:block'>
+            <img
+              className='absolute w-5 h-5 top-1/2 left-1/2 -translate-x-15'
+              src='/icons/pencil-white.png'
+              alt='Write Icon'
+            />
+            <button
+              className='bg-primary-300 hover:bg-primary-200 text-sm-semibold right-0 mt-4 h-[44px] w-full cursor-pointer rounded-full text-white hover:text-black md:w-[182px]'
+              onClick={() => navigate('/write')}
+            >
+              Write Post
+            </button>
+          </div>
+        </div>
+
+        {myPosts.length > 0 ? (
+          myPosts.map((post) => (
+            <Card
+              key={post.id}
+              className='flex flex-row w-full border-b-2 last:border-b-0 md:mt-10'
+            >
+              <img
+                src={post.imageUrl || '/images/image.png'}
+                width={340}
+                height={208}
+                className='hidden rounded-sm md:block md:py-4'
+                onError={(e) => {
+                  e.currentTarget.src = '/images/coffee.png';
+                }}
+                alt={post.title}
+              />
+              <div className='flex flex-col flex-1 md:block'>
+                <CardHeader className='flex flex-col items-start'>
+                  <CardTitle
+                    onClick={() => navigate(`/detail/${post.id}`)}
+                    className='mb-3 font-bold cursor-pointer text-md-bold text-neutral-900 md:text-xl'
+                  >
+                    {post.title}
+                  </CardTitle>
+                  <div className='flex flex-wrap gap-2 mt-1'>
+                    {post.tags?.slice(0, 4).map((tag, idx) => (
+                      <div
+                        key={idx}
+                        className='px-2 py-1 border rounded-md text-xs-regular border-neutral-300'
+                      >
+                        {tag.trim()}
+                      </div>
+                    ))}
+                  </div>
+                </CardHeader>
+
+                <CardDescription className='mb-4 text-gray-500 text-xs-regular md:text-sm'>
+                  {post.content?.slice(0, 100) || 'No content available...'}...
+                </CardDescription>
+
+                <CardFooter className='flex flex-col gap-2 text-xs text-neutral-700'>
+                  <div className='flex justify-between text-xs'>
+                    <span>
+                      Created:{' '}
+                      {new Date(post.createdAt || '').toLocaleDateString()}
+                    </span>
+                    <span>
+                      Last updated:{' '}
+                      {new Date(post.createdAt || '').toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className='flex gap-4'>
+                    <PostStatistic
+                      trigger={
+                        <button className='text-primary-300 hover:cursor-pointer hover:underline'>
+                          Statistic
+                        </button>
+                      }
+                      postId={post.id}
+                    />
+                    <button className='text-primary-300 hover:underline'>
+                      Edit
+                    </button>
+                    <DeleteDialog
+                      trigger={
+                        <button
+                          className='text-red-500 hover:cursor-pointer hover:underline'
+                          onClick={() => setPostIdToDelete(post.id)}
+                        >
+                          Delete
+                        </button>
+                      }
+                      onConfirm={async () => {
+                        if (postIdToDelete !== null) {
+                          await deletePost(postIdToDelete);
+                          toast.success('Post deleted');
+                          setPostIdToDelete(null);
+                        }
+                      }}
+                      onClose={() => setPostIdToDelete(null)}
+                    />
+                  </div>
+                </CardFooter>
+              </div>
+            </Card>
+          ))
+        ) : (
+          <p>You haven't written any posts yet.</p>
+        )}
+      </div>
+    </div>
+  );
+}

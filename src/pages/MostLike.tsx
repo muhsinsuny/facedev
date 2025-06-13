@@ -8,7 +8,14 @@ import {
   CardTitle,
 } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
-import { fetchMostLikedPosts } from '../lib/api/post';
+import {
+  fetchMostLikedPosts,
+  fetchPostComments,
+  fetchPostLikes,
+} from '../lib/api/post';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface Post {
   id: string;
@@ -25,12 +32,20 @@ interface Post {
 }
 
 function MostLike() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const { data, isLoading, error } = useQuery<Post[]>({
     queryKey: ['most-liked'],
     queryFn: async () => {
-      const res = await fetchMostLikedPosts(1,5);
+      const res = await fetchMostLikedPosts(1, 5);
       return res.data;
     },
+  });
+
+  useEffect(() => {
+    fetchPostComments(1);
+    fetchPostLikes(1);
   });
 
   if (isLoading) {
@@ -48,10 +63,8 @@ function MostLike() {
   }
 
   return (
-    <div>
-      <h2 className='mb-5 font-bold md:text-display-xs custom-container'>
-        Most Liked
-      </h2>
+    <div className='custom-container'>
+      <h2 className='mb-5 font-bold md:text-display-xs'>Most Liked</h2>
       <div className='flex-col space-y-4 md:w-full'>
         {Array.isArray(data)
           ? data.map((post) => (
@@ -61,7 +74,14 @@ function MostLike() {
               >
                 <div className='flex flex-col flex-1 md:block'>
                   <CardHeader className='flex flex-col items-start'>
-                    <CardTitle className='flex flex-col mb-1 font-bold text-md md:text-xl'>
+                    <CardTitle
+                      className='flex flex-col mb-1 font-bold cursor-pointer text-md hover:text-primary-300 hover:underline md:text-xl'
+                      onClick={() => {
+                        if (user?.id !== post.author?.id) {
+                          return navigate(`/detail/${post.id}`);
+                        } else navigate(`/update-post/${post.id}`);
+                      }}
+                    >
                       {post.title}
                     </CardTitle>
                     <CardDescription className='mb-4 text-gray-500 text-sm-regular'>
@@ -78,7 +98,7 @@ function MostLike() {
                     </p>
                     <p className='flex items-center gap-2 text-sm text-gray-500'>
                       <img src='/icons/comment.svg' />
-                      {post.comments}
+                      {post?.comments}
                     </p>
                   </CardFooter>
                 </div>

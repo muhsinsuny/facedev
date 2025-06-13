@@ -110,7 +110,18 @@ export default function WritePage() {
                 setContents={content}
                 onChange={(value) => {
                   // const trimmedValue = value.trim().replace(/^['"]|['"]$/g, '');
-                  const removeTags = value.replace(/<\/?p[^>]*>/g, '');
+                  const removeTags = value.replace(/<\/?p[^>]*>/g, ' ');
+                  const convertHtmlToPlainText = (html: string) => {
+                    return html
+                      .replace(/<br\s*\/?>/gi, '\n')
+                      .replace(/<\/div>/gi, '\n')
+                      .replace(/<div>/gi, '')
+                      .replace(/&nbsp;/g, ' ')
+                      .replace(/&amp;/g, '&');
+                  };
+
+                  const plainText = convertHtmlToPlainText(removeTags);
+                  console.log(plainText);
 
                   setContent(removeTags);
                 }}

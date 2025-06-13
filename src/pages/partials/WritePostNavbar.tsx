@@ -19,9 +19,12 @@ export default function WritePostNavbar() {
       {user && (
         <div className='flex items-center gap-2'>
           <img
-            src={user.avatarUrl || '/images/avatar.png'}
+            src={user?.avatarUrl || '/images/avatar.png'}
             alt='avatar'
             className='w-8 h-8 rounded-full'
+            onError={(e) => {
+              e.currentTarget.src = '/images/avatar.png';
+            }}
           />
           <span className='hidden text-sm md:block'>{user.name}</span>
         </div>

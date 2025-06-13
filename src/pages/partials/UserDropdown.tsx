@@ -6,25 +6,29 @@ import {
   DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export function UserDropdown({
-  user,
   onLogout,
 }: {
   user: { name: string; avatarUrl: string };
   onLogout: () => void;
 }) {
+  const { user } = useAuth();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className='flex items-center gap-2 cursor-pointer'>
           <img
-            src={user.avatarUrl}
+            src={user?.avatarUrl || '/images/avatar.png'}
             alt='avatar'
             className='w-8 h-8 rounded-full'
+            onError={(e) => {
+              e.currentTarget.src = '/images/avatar.png';
+            }}
           />
           <span className='hidden text-sm font-medium md:block'>
-            {user.name}
+            {user?.name}
           </span>
         </div>
       </DropdownMenuTrigger>

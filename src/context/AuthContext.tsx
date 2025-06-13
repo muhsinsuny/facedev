@@ -1,27 +1,20 @@
 // src/context/AuthContext.tsx
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import type { User } from '../hooks/useAuth';
 
+export type User = {
+  id: string;
+  name: string;
+  avatarUrl: string;
+  email: string;
+  headline?: string;
+};
 export type AuthContextType = {
-  user:
-    | {
-        id: string;
-        name: string;
-        avatarUrl: string;
-        email: string;
-        headline?: string;
-      }
-    | User
-    | null;
+  user: User | null;
   token: string | null;
   loading: boolean;
   login: (data: { user: User; token: string }) => void;
   logout: () => void;
-  avatarUrl?: string;
-  email?: string;
-  password?: string;
-  name?: string;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -40,11 +33,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const storedToken = localStorage.getItem('token');
     if (storedToken && storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
         setToken(storedToken);
-        if (isAuthenticated) {
-          setIsAuthenticated(true);
-        }
+        setIsAuthenticated(true); // ✅ langsung set true di sini
       } catch (error) {
         console.error('Error parsing user or token from localStorage:', error);
         setUser(null);
@@ -52,15 +44,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
+      // try {
+      //   setUser(JSON.parse(storedUser));
+      //   setToken(storedToken);
+      //   setIsAuthenticated(true);
+      // } catch (error) {
+      //   console.error('Error parsing user or token from localStorage:', error);
+      //   setUser(null);
+      //   setToken(null);
+      //   localStorage.removeItem('token');
+      //   localStorage.removeItem('user');
+      // }
     }
     setTimeout(() => setLoading(false), 1000);
   }, [isAuthenticated]);
 
   const login = async (data: { user: User; token: string }) => {
-    setUser(data.user);
-    setToken(data.token);
+    setUser(user);
+    setToken(token);
     setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('token', data.token);
   };
 

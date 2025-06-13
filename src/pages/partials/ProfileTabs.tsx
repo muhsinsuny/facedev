@@ -1,0 +1,46 @@
+import { useState } from 'react';
+import YourPosts from '../../pages/YourPosts';
+import ChangePasswordForm from './../partials/ChangePasswordForm';
+
+export default function ProfileTabs() {
+  const [activeTab, setActiveTab] = useState<'posts' | 'password'>('posts');
+
+  return (
+    <div className='custom-container'>
+      <div className='flex flex-col items-center md:w-1/2'>
+        <div className='w-full max-w-2xl mx-auto mt-8'>
+          {/* Tab Buttons */}
+          <div className='flex w-full border-b border-neutral-300'>
+            <button
+              className={`flex-1 cursor-pointer py-2 text-center text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'posts'
+                  ? 'border-primary-300 text-primary-300 border-b-3'
+                  : 'hover:text-primary-300 text-neutral-700'
+              }`}
+              onClick={() => setActiveTab('posts')}
+            >
+              Your Posts
+            </button>
+
+            <button
+              className={`flex-1 cursor-pointer py-2 text-center text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'password'
+                  ? 'border-primary-300 text-primary-300 border-b-3'
+                  : 'hover:text-primary-300 text-neutral-700'
+              }`}
+              onClick={() => setActiveTab('password')}
+            >
+              Change Password
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className='mt-6'>
+        {activeTab === 'posts' && <YourPosts />}
+        {activeTab === 'password' && <ChangePasswordForm />}
+      </div>
+    </div>
+  );
+}

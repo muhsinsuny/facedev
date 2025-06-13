@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Card,
   CardContent,
@@ -9,15 +9,35 @@ import {
 } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
 import MostLike from './MostLike';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Navbar from './partials/Navbar';
 import { useAuth } from '../context/AuthContext';
 import Footer from './partials/Footer';
-import { fetchRecommendedPosts } from '../lib/api/post';
+import {
+  // commentOnPost,
+  // fetchPostComments,
+  // fetchPostLikes,
+  fetchRecommendedPosts,
+} from '../lib/api/post';
 import { useNavigate, useParams } from 'react-router-dom';
 import LikeButton from './partials/LikeButton';
 import { usePostDetail } from '../hooks/usePostDetail';
+// import CommentModal from './partials/CommentModal';
+import { api } from '../lib/api';
+import IconDialog from './partials/IconDIalog';
+
+// interface Comment {
+//   id: string;
+//   content: string;
+//   createdAt: Date;
+//   author?: {
+//     id: number;
+//     name: string;
+//     headline: string;
+//     avatarUrl: string;
+//   };
+// }
 
 interface Post {
   id: string;
@@ -29,12 +49,13 @@ interface Post {
   comments?: number;
   likedByCurrentUser: boolean;
   imageUrl?: string;
+  createdAt?: string;
   author?: {
     id: string;
     name: string;
-    avatarUrl?: string;
+    headline: string;
+    avatar?: string;
   };
-  createdAt?: string;
 }
 
 interface DataResponse {
@@ -51,12 +72,25 @@ const HomePage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { refetch } = usePostDetail(id!);
-  // const [setCurrentPost] = useState<Post | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  // const [commentCounts] = useState<Record<string, number>>({});
+  const [comment, setComment] = useState('');
 
-  const User = user || {
-    name: 'Guest',
-    avatarUrl: '/images/avatar.png', // Default avatar for guest
-  };
+  const queryClient = useQueryClient();
+
+  const commentMutation = useMutation({
+    mutationFn: async ({ content }: { content: string }) => {
+      await api.post(`/comments/${id}`, { content });
+    },
+    onSuccess: () => {
+      setComment('');
+      queryClient.invalidateQueries({ queryKey: ['comments', id] });
+    },
+  });
+
+  if (comment) {
+    console.log('comment', comment);
+  }
 
   const {
     data = { data: [], total: 0 },
@@ -65,7 +99,7 @@ const HomePage = () => {
   } = useQuery<DataResponse>({
     queryKey: ['recommended', page],
     queryFn: async () => {
-      const res = await fetchRecommendedPosts(limit, page);
+      const res = await fetchRecommendedPosts(limit, page + 1);
       console.log('Recommended posts data:', res);
       return res;
     },
@@ -75,6 +109,20 @@ const HomePage = () => {
     retry: 1,
     retryDelay: 1000,
   });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [page]);
+
+  const { data: comments } = useQuery({
+    queryKey: ['comments', id],
+    queryFn: async () => (await api.get(`/posts/${id}/comments`)).data,
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+  });
+  if (comments) {
+    console.log('comments', comments);
+  }
 
   if (isLoading) {
     return (
@@ -100,7 +148,7 @@ const HomePage = () => {
     <>
       <Navbar />
       <div className='relative p-4 mx-auto custom-container' id='home-page'>
-        <div className='flex flex-col md:relative md:flex-row md:gap-8'>
+        <div className='flex flex-col md:relative md:flex-row md:gap-20'>
           <div className='z-10 flex-col space-y-4 md:left-10 md:flex md:w-full md:gap-8 md:space-y-0'>
             <h1 className='mt-6 mb-4 md:display-sm-bold text-xl-bold text-neutral-900 md:mt-12'>
               Recommended For You
@@ -124,14 +172,16 @@ const HomePage = () => {
                     <div className='flex flex-col flex-1 md:block'>
                       <CardHeader className='flex flex-col items-start'>
                         <CardTitle
-                          className='flex flex-col mb-3 font-bold cursor-pointer text-md-bold text-md text-neutral-900 md:text-xl'
+                          className='flex flex-col mb-3 font-bol text-md-bold text-md'
                           onClick={() => {
                             if (user?.id !== post.author?.id) {
                               return navigate(`/detail/${post.id}`);
                             } else navigate(`/update-post/${post.id}`);
                           }}
                         >
-                          {post.title}
+                          <div className='cursor-pointer text-md-bold hover:text-primary-300 text-neutral-900 hover:underline md:text-xl'>
+                            {post.title}
+                          </div>
                           <div className='flex flex-row w-full h-full gap-4 mt-3 text-xs-regular text-neutral-900'>
                             {post.tags
                               ?.slice(0, 4)
@@ -155,11 +205,14 @@ const HomePage = () => {
                       </CardHeader>
                       <CardContent className='flex flex-row items-center flex-1 gap-4 mb-4'>
                         <img
-                          src={User?.avatarUrl || '/images/avatar.png'}
+                          src={user?.avatarUrl || '/images/avatar.png'}
                           alt='avatar'
                           width={40}
                           height={40}
                           className='w-10 h-10 rounded-full md:mr-2 md:mb-0 md:h-12 md:w-12 md:object-cover md:object-center'
+                          onError={(e) => {
+                            e.currentTarget.src = '/images/avatar.png';
+                          }}
                         />
                         <p className='md:text-sm-medium text-xs-text-xs-regular text-neutral-900'>
                           {post.author?.name}{' '}
@@ -171,15 +224,22 @@ const HomePage = () => {
                       </CardContent>
                       <CardFooter className='flex-row items-center justify-start gap-4 mb-4'>
                         <LikeButton
-                          postId={id!}
+                          postId={post.id}
                           initialLiked={post.likedByCurrentUser}
                           initialCount={post.likes}
                           onLikeChange={() => refetch()}
                         />
-                        <p className='flex items-center gap-2 text-sm text-gray-500'>
-                          <img src='/icons/comment.svg' />
-                          {post.comments}
-                        </p>
+                        <div className='flex flex-row items-center gap-2 text-sm text-gray-500'>
+                          <IconDialog
+                            addComment={(val) =>
+                              commentMutation.mutate({ content: val })
+                            }
+                            comments={comments}
+                            open={isOpen}
+                            onOpenChange={(open) => setIsOpen(open)}
+                          />
+                          {/* {commentCounts[post.id] ?? 0} */}
+                        </div>
                       </CardFooter>
                     </div>
                   </Card>
@@ -207,7 +267,7 @@ const HomePage = () => {
             </div>
           </div>
           {/* Most Like Section */}
-          <div className='z-10 w-full mt-12 md: md:right-10 md:w-1/3 md:pl-4'>
+          <div className='z-10 w-full mt-12 md:w-1/3'>
             <MostLike />
           </div>
         </div>
@@ -216,7 +276,7 @@ const HomePage = () => {
         <Footer />
 
         {/* vertical line */}
-        <div className='top-0 right-[300px] bottom-30 z-50 mt-12 hidden w-px transform border-1 border-neutral-300 md:absolute md:block' />
+        <div className='top-0 right-[320px] bottom-30 z-50 mt-12 hidden w-px transform border-1 border-neutral-300 md:absolute md:block' />
 
         {/* horizontal line */}
         <div className='w-full mt-12 transform border-6 border-neutral-300 md:absolute md:hidden' />

@@ -102,8 +102,8 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
                       >
                         <div className='flex items-center'>
                           <img
-                            src={comments.author?.avatarUrl}
-                            alt={comments.author?.name}
+                            src={comment.author?.avatarUrl}
+                            alt={comment.author?.name}
                             className='w-8 h-8 mr-2 rounded-full'
                             onError={(e) => {
                               e.currentTarget.src = '/images/avatar.png';
@@ -111,7 +111,7 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
                           />
                           <div>
                             <p className='font-semibold'>
-                              {comments?.author?.name}
+                              {comment?.author?.name}
                             </p>
                             <p className='text-sm text-gray-500'>
                               {moment(comment.createdAt).format('DD MMMM YYYY')}

@@ -175,9 +175,12 @@ const DetailPost = () => {
               {visibleComments.map((c: Comment) => (
                 <div key={c.id} className='flex gap-3'>
                   <img
-                    src='/images/avatar.png'
+                    src={c.author?.avatarUrl || '/images/avatar.png'}
                     className='w-10 h-10 rounded-full'
                     alt='user'
+                    onError={(e) => {
+                      e.currentTarget.src = '/images/avatar.png';
+                    }}
                   />
                   <div>
                     <p className='font-semibold'>

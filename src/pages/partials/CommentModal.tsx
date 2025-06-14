@@ -71,7 +71,7 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
             </DialogTrigger>
             <DialogContent className='max-w-md text-md-bold text-neutral-950'>
               <DialogTitle>Comments({comments?.length})</DialogTitle>
-              <DialogDescription className='mb-2 text-sm-semibold text-neutral-950'>
+              <DialogDescription className='text-sm-semibold text-neutral-950'>
                 Give your comments
               </DialogDescription>
 
@@ -85,13 +85,12 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
               <DialogFooter>
                 <Button
                   onClick={handleSubmit}
-                  className='text-white bg-primary-300 hover:bg-primary-200 hover:cursor-pointer hover:text-black'
+                  className='bg-primary-300 hover:bg-primary-200 h-[40px] w-full rounded-full text-white hover:cursor-pointer hover:text-black md:h-[48px] md:w-[204px]'
                 >
                   Send
                 </Button>
               </DialogFooter>
 
-              <h3 className='mb-2 font-medium text-md'>All comments :</h3>
               <div className='overflow-y-auto max-h-40'>
                 {comments?.length > 0 ? (
                   comments.map((comment: Comment, index: number) => (
@@ -102,7 +101,9 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
                       >
                         <div className='flex items-center'>
                           <img
-                            src={comment.author?.avatarUrl}
+                            src={
+                              comment.author?.avatarUrl || '/images/avatar.png'
+                            }
                             alt={comment.author?.name}
                             className='w-8 h-8 mr-2 rounded-full'
                             onError={(e) => {

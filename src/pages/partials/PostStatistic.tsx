@@ -44,8 +44,6 @@ interface Comment {
 
 export default function PostStatistic({ postId, trigger }: PostStatisticProps) {
   const [open, setOpen] = useState(false);
-  // const { user } = useAuth();
-  // const { id } = useParams<{ id: string }>();
 
   const { data: likes, isLoading: loadingLikes } = useQuery({
     queryKey: ['postLikes', postId],
@@ -55,8 +53,6 @@ export default function PostStatistic({ postId, trigger }: PostStatisticProps) {
     },
     enabled: open && typeof postId === 'number' && postId > 0,
   });
-  console.log('likes', likes);
-  console.log('postId in dialog:', postId);
 
   const { data: comments, isLoading: loadingComments } = useQuery({
     queryKey: ['postComments', postId],
@@ -66,7 +62,6 @@ export default function PostStatistic({ postId, trigger }: PostStatisticProps) {
     },
     enabled: open && typeof postId === 'number' && postId > 0,
   });
-  console.log('comments', comments);
 
   return (
     <div className='relative w-full md:w-full'>

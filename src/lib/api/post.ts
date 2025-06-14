@@ -2,37 +2,9 @@
 import type { QueryFunctionContext } from '@tanstack/react-query';
 import { api } from './index';
 
-// interface Post {
-//   id: string;
-//   title: string;
-//   content: string;
-//   likes: number;
-//   tags: string[];
-//   className?: string;
-//   comments?: number;
-//   imageUrl?: string;
-//   author?: {
-//     id: string;
-//     name: string;
-//     avatarUrl?: string;
-//   };
-//   createdAt?: string;
-// }
-
-// ✅ Ambil post list berdasarkan ID
-// export const fetchPosts = async (id: number) => {
-//   const res = await api.get(`/posts/${id}`, {
-//     params: { id },
-//   });
-//   return res.data;
-// };
-
 export const fetchPosts = async ({ queryKey }: QueryFunctionContext) => {
   const userId = queryKey[1] as number;
 
-  // return await {
-  //   queryKey: ['posts', userId],
-  //   queryFn: async () => {
   if (userId) {
     try {
       const res = await api.get(`/posts/${userId}`);
@@ -62,7 +34,6 @@ export const fetchRecommendedPosts = async (
   const res = await api.get(`/posts/recommended`, {
     params: { limit, page },
   });
-  console.log('Recommended posts:', res.data);
   return res.data;
 };
 
@@ -71,7 +42,6 @@ export const fetchMostLikedPosts = async (page: number, limit: number) => {
   const res = await api.get('/posts/most-liked', {
     params: { page, limit },
   });
-  console.log('Most liked posts:', res.data);
   return res.data;
 };
 
@@ -110,8 +80,6 @@ export const getMyPosts = async (page: number, limit: number) => {
       params: { page, limit },
     });
 
-    console.log('Response from /posts/my-posts:', res.data); // debug
-
     // Pastikan ini return array, bukan undefined
     return res.data?.data ?? [];
   } catch (error) {
@@ -146,14 +114,12 @@ export const deletePost = async (id: number) => {
 // ✅ Ambil post comments
 export const fetchPostComments = async (id: number) => {
   const res = await api.get(`/posts/${id}/comments`);
-  console.log('FETCH COMMENTS RESPONSE', res.data);
   return res.data;
 };
 
 // ✅ Ambil post liked
 export const fetchPostLikes = async (id: number) => {
   const res = await api.get(`/posts/${id}/likes`);
-  console.log('FETCH LIKES RESPONSE', res.data);
   return res.data;
 };
 

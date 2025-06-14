@@ -1,5 +1,8 @@
 // src/lib/api/user.ts
+// import axios from 'axios';
 import { api } from './index';
+// import { useState } from 'react';
+// import { type User } from '../../context/AuthContext';
 
 // ambil profile user
 export const getProfile = async () => {

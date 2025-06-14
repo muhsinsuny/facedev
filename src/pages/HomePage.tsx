@@ -100,7 +100,6 @@ const HomePage = () => {
     queryKey: ['recommended', page],
     queryFn: async () => {
       const res = await fetchRecommendedPosts(limit, page + 1);
-      console.log('Recommended posts data:', res);
       return res;
     },
 

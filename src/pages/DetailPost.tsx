@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../components/ui/card';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, type User } from '../context/AuthContext';
 
 interface Comment {
   id: string;
@@ -54,7 +54,7 @@ interface Post {
 }
 
 const DetailPost = () => {
-  const { user } = useAuth();
+  const { user }: { user: User | null } = useAuth();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -74,6 +74,11 @@ const DetailPost = () => {
   const commentMutation = useMutation({
     mutationFn: async ({ content }: { content: string }) => {
       await api.post(`/comments/${id}`, { content });
+    },
+    onMutate: async () => {
+      if (!user) {
+        alert(`Silakan login terlebih dahulu untuk menambahkan komentar...!`);
+      }
     },
     onSuccess: () => {
       setComment('');
@@ -97,7 +102,7 @@ const DetailPost = () => {
 
   return (
     <>
-      {user && <Navbar />}
+      <Navbar />
       <div className='custom-container'>
         <div className='max-w-3xl px-4 py-10 mx-auto'>
           <h1 className='mb-4 text-3xl font-bold'>{post.title}</h1>

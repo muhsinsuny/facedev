@@ -59,7 +59,7 @@ const CommentModal = ({ addComment }: CommentModalProps) => {
   return (
     <>
       {user && (
-        <div>
+        <div className='custom-container'>
           <Dialog>
             <DialogTrigger asChild>
               <Button

@@ -78,15 +78,6 @@ export const ProfileEdit = ({ open, onOpenChange }: EditProfileModalProps) => {
         </DialogHeader>
 
         <div className='space-y-4'>
-          {/* <div className='flex items-center justify-center'>
-            <Input
-              type='file'
-              accept='image/*'
-              className='justify-center item-center'
-              placeholder={user?.avatarUrl}
-              onChange={handleFileChange}
-            />
-          </div> */}
           {user && <AvatarUploader user={user as User} {...handleFileChange} />}
           <div className='text-sm-semibold text-neutral-950'>
             Name

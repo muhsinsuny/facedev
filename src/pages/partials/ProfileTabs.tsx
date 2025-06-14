@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import YourPosts from '../../pages/YourPosts';
 import ChangePasswordForm from './../partials/ChangePasswordForm';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProfileTabs() {
   const [activeTab, setActiveTab] = useState<'posts' | 'password'>('posts');
+  const navigate = useNavigate();
 
   return (
     <div className='custom-container'>
@@ -36,6 +38,12 @@ export default function ProfileTabs() {
         </div>
       </div>
 
+      <button
+        className='bg-primary-300 hover:bg-primary-200 text-sm-semibold right-0 mt-4 h-[44px] w-full cursor-pointer rounded-full text-white hover:text-black md:w-[182px]'
+        onClick={() => navigate('/write')}
+      >
+        Write Post
+      </button>
       {/* Tab Content */}
       <div className='mt-6'>
         {activeTab === 'posts' && <YourPosts />}

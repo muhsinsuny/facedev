@@ -1,7 +1,6 @@
-import {useState, useEffect} from 'react';
-import { AuthContext} from './AuthContext';
-import type  {User } from '../hooks/useAuth';
-
+import { useState, useEffect } from 'react';
+import { AuthContext } from './AuthContext';
+import type { User } from '../hooks/useAuth';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -12,8 +11,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('accessToken');
     if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
-        setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+      setToken(storedToken);
     }
     setLoading(false);
   }, []);
@@ -32,9 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null);
   };
 
-
   return (
-    <AuthContext.Provider value={{ user, token, logout, login, loading }}>
+    <AuthContext.Provider
+      value={{ user, token, setUser, logout, login, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

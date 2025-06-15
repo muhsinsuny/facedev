@@ -10,6 +10,7 @@ import {
 } from '../../components/ui/dialog';
 import { Button } from '../../components/ui/button';
 import type { ReactNode } from 'react';
+import { ShineBorder } from '../../components/magicui/shine-border';
 
 interface DeleteDialogProps {
   trigger: ReactNode;
@@ -32,6 +33,7 @@ export default function DeleteDialog({
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
+        <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#ffbe7b']} />
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

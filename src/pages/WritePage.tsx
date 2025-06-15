@@ -9,11 +9,12 @@ import { useAuth } from '../context/AuthContext';
 import Footer from './partials/Footer';
 import { createPost } from '../lib/api/post';
 import { useNavigate } from 'react-router-dom';
+// import DOMPurify from 'dompurify';
 
 export default function WritePage() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  // const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
   // const [image] = useState<File | null>(null);
   const auth = useAuth();
@@ -23,6 +24,8 @@ export default function WritePage() {
   const [imageUrl] = useState(
     image instanceof File ? URL.createObjectURL(image) : image
   );
+  const [content, setContent] = useState('');
+  const [plainContent, setPlainContent] = useState('');
 
   if (!token) {
     return (
@@ -44,6 +47,8 @@ export default function WritePage() {
       tags: tags.split(',').map((t) => t.trim()),
       image,
     });
+    console.log('HTML:', content);
+    console.log('plain Text:', plainContent);
 
     actionFetchPost();
   };
@@ -67,6 +72,11 @@ export default function WritePage() {
       console.error(error);
     }
   };
+
+  function stripHtmlTags(html: string): string {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  }
 
   return (
     <>
@@ -97,33 +107,14 @@ export default function WritePage() {
                   className:
                     'text-sm-regular text-neutral-500 w-fill h-[186px]',
                   height: '300',
-                  buttonList: [
-                    ['undo', 'redo'],
-                    ['formatBlock'],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['fontColor', 'hiliteColor'],
-                    ['align', 'list', 'table'],
-                    ['link', 'image', 'video'],
-                    ['fullScreen', 'codeView'],
-                  ],
+                  buttonList: [['undo', 'redo'], ['formatBlock']],
                 }}
                 setContents={content}
                 onChange={(value) => {
-                  // const trimmedValue = value.trim().replace(/^['"]|['"]$/g, '');
-                  const removeTags = value.replace(/<\/?p[^>]*>/g, ' ');
-                  const convertHtmlToPlainText = (html: string) => {
-                    return html
-                      .replace(/<br\s*\/?>/gi, '\n')
-                      .replace(/<\/div>/gi, '\n')
-                      .replace(/<div>/gi, '')
-                      .replace(/&nbsp;/g, ' ')
-                      .replace(/&amp;/g, '&');
-                  };
+                  // const plainText = stripHtmlTags(value);
 
-                  const plainText = convertHtmlToPlainText(removeTags);
-                  console.log(plainText);
-
-                  setContent(removeTags);
+                  setContent(value);
+                  setPlainContent(stripHtmlTags(value));
                 }}
               />
             </div>

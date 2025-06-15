@@ -38,7 +38,6 @@ export default function YourPosts() {
 
   const {
     data: myPosts = [],
-    // isLoading,
     isError,
     error,
   } = useQuery<Post[]>({
@@ -51,7 +50,7 @@ export default function YourPosts() {
   if (isError) return <p>Error: {(error as Error).message}</p>;
 
   return (
-    <div className='max-w-2xl'>
+    <div className='max-w-3xl'>
       <div className='md:flex md:items-center md:justify-between'>
         <h3 className='mt-4 text-lg-bold text-neutral-900'>
           {myPosts.length} Post{myPosts.length !== 1 && 's'}
@@ -90,8 +89,8 @@ export default function YourPosts() {
             <div className='flex flex-col flex-1 md:block'>
               <CardHeader className='flex flex-col items-start'>
                 <CardTitle
-                  onClick={() => navigate(`/detail/${post.id}`)}
-                  className='mb-3 font-bold cursor-pointer text-md-bold text-neutral-900 md:text-xl'
+                  onClick={() => navigate(`/update-post/${post.id}`)}
+                  className='mb-3 font-bold cursor-pointer text-md-bold hover:text-primary-300 text-neutral-900 hover:cursor-pointer hover:text-xl hover:underline'
                 >
                   {post.title}
                 </CardTitle>
@@ -111,7 +110,7 @@ export default function YourPosts() {
                 {post.content?.slice(0, 100) || 'No content available...'}...
               </CardDescription>
 
-              <CardFooter className='flex flex-col gap-2 text-xs text-neutral-700'>
+              <CardFooter className='flex flex-col gap-2 text-xs flex-start text-neutral-700'>
                 <div className='flex flex-row justify-between gap-2 text-xs'>
                   <span>
                     Created{' '}

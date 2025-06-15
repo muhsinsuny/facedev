@@ -12,6 +12,7 @@ import { Button } from '../components/ui/button';
 import { useAuth, type User } from '../context/AuthContext';
 import { updateUserProfile } from '../lib/api/user'; // Pastikan fungsi ini menerima FormData
 import AvatarUploader from './partials/AvatarUploader';
+import { ShineBorder } from '../components/magicui/shine-border';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -67,7 +68,12 @@ export const ProfileEdit = ({ open, onOpenChange }: EditProfileModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className='overflow-hidden'>
+        <ShineBorder
+          shineColor={['#A07CFE', '#FE8FB5', '#ffbe7b']}
+          duration={13}
+          borderWidth={3}
+        />
         <DialogHeader>
           <DialogTitle className='text-left text-md-bold text-neutral-950'>
             Edit Profil

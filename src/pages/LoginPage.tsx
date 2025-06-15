@@ -7,6 +7,8 @@ import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Eye, EyeOff } from 'lucide-react';
 import { getUserByEmail, loginUser } from '../lib/api/auth';
 import { useAuth } from '../context/AuthContext';
+import { ShineBorder } from '../components/magicui/shine-border';
+
 import { jwtDecode } from 'jwt-decode';
 
 export default function LoginPage() {
@@ -39,7 +41,9 @@ export default function LoginPage() {
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-100 custom-container'>
-      <div className='mt-20 h-[398px] w-[345px] max-w-md rounded-xl border bg-white p-6 shadow-md'>
+      <div className='relative mt-20 h-[398px] w-[345px] max-w-md overflow-hidden rounded-xl p-6 shadow-md'>
+        <ShineBorder />
+        {/* <div className='mt-20 w-[345px] max-w-md rounded-xl border bg-white p-6 shadow-md'> */}
         <h1 className='mb-5 text-xl-bold text-start text-neutral-900'>
           Sign In
         </h1>
@@ -118,5 +122,6 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+    // </div>
   );
 }

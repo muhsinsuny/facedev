@@ -14,30 +14,12 @@ import ReactPaginate from 'react-paginate';
 import Navbar from './partials/Navbar';
 import { useAuth } from '../context/AuthContext';
 import Footer from './partials/Footer';
-import {
-  // commentOnPost,
-  // fetchPostComments,
-  // fetchPostLikes,
-  fetchRecommendedPosts,
-} from '../lib/api/post';
+import { fetchRecommendedPosts } from '../lib/api/post';
 import { useNavigate, useParams } from 'react-router-dom';
 import LikeButton from './partials/LikeButton';
 import { usePostDetail } from '../hooks/usePostDetail';
-// import CommentModal from './partials/CommentModal';
 import { api } from '../lib/api';
 import IconDialog from './partials/IconDIalog';
-
-// interface Comment {
-//   id: string;
-//   content: string;
-//   createdAt: Date;
-//   author?: {
-//     id: number;
-//     name: string;
-//     headline: string;
-//     avatarUrl: string;
-//   };
-// }
 
 interface Post {
   id: string;
@@ -73,7 +55,6 @@ const HomePage = () => {
   const navigate = useNavigate();
   const { refetch } = usePostDetail(id!);
   const [isOpen, setIsOpen] = useState(false);
-  // const [commentCounts] = useState<Record<string, number>>({});
   const [comment, setComment] = useState('');
 
   const queryClient = useQueryClient();

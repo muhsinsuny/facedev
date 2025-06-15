@@ -100,7 +100,7 @@ function AnimatedRoutes() {
           }
         />
         <Route
-          path='/my-post'
+          path='/my-posts'
           element={
             <AnimatedPage animation={fadeSlideDown}>
               <YourPosts />

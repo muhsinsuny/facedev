@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ProfileEdit from './EditProfile';
 import ProfileTabs from './partials/ProfileTabs';
 import Footer from './partials/Footer';
+import { ShineBorder } from '../components/magicui/shine-border';
 
 const ProfileUpdate = () => {
   const { user } = useAuth();
@@ -15,8 +16,9 @@ const ProfileUpdate = () => {
         <>
           <Navbar />
           <div className='custom-container'>
-            <div className='max-w-2xl px-4 py-8 mx-auto'>
-              <div className='flex flex-row items-center justify-between p-3 border rounded-xl border-neutral-300'>
+            <div className='max-w-2xl py-8 mx-auto'>
+              <div className='relative flex flex-row items-center justify-between p-3 overflow-hidden border rounded-xl border-neutral-300'>
+                <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#ffbe7b']} />
                 <div className='flex flex-row gap-3'>
                   <img
                     src={user?.avatarUrl || '/images/avatar.png'}
@@ -45,7 +47,6 @@ const ProfileUpdate = () => {
                   onOpenChange={() => setOpenEditProfile(false)}
                 />
               </div>
-
               <ProfileTabs />
             </div>
           </div>

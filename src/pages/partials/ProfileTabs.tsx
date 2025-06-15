@@ -39,7 +39,7 @@ export default function ProfileTabs() {
       </div>
 
       <button
-        className='bg-primary-300 hover:bg-primary-200 text-sm-semibold right-0 mt-4 h-[44px] w-full cursor-pointer rounded-full text-white hover:text-black md:w-[182px]'
+        className='bg-primary-300 hover:bg-primary-200 text-sm-semibold right-0 mt-4 h-[44px] w-full cursor-pointer rounded-full text-white hover:text-black md:hidden md:w-[182px]'
         onClick={() => navigate('/write')}
       >
         Write Post

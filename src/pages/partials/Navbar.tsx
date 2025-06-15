@@ -11,6 +11,7 @@ import {
 } from '../../components/ui/sheet';
 import { UserDropdown } from '../partials/UserDropdown';
 import { useAuth } from '../../context/AuthContext';
+import { ShimmerButton } from '../../components/magicui/shimmer-button';
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -87,12 +88,15 @@ export default function Navbar() {
               >
                 Login
               </Link>
-              <button
+              <ShimmerButton
+                shimmerColor='#ffffff'
+                background='#0093dd'
+                shimmerSize='0.5em'
                 onClick={() => navigate('/register')}
                 className='text-sm-semibold bg-primary-300 hover:bg-primary-200 h-[44px] w-[182px] rounded-full px-4 py-2 text-white transition-colors duration-200 hover:cursor-pointer hover:text-black'
               >
                 Register
-              </button>
+              </ShimmerButton>
             </div>
             <div>
               {isSearchBoxVisible && (

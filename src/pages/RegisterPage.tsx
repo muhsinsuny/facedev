@@ -7,6 +7,7 @@ import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
 import { registerUser } from '../lib/api/auth';
 import { Eye, EyeOff } from 'lucide-react';
+import { ShineBorder } from '../components/magicui/shine-border';
 
 // 💡 Zod schema untuk validasi register
 const registerSchema = z
@@ -50,7 +51,8 @@ export default function RegisterPage() {
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-100'>
-      <div className='h-[598px] w-[345px] max-w-md rounded-xl border-neutral-200 bg-white p-6 shadow-md'>
+      <div className='relative h-[598px] w-[345px] max-w-md overflow-hidden rounded-xl border-neutral-200 bg-white p-6 shadow-md'>
+        <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#ffbe7b']} />
         <h1 className='mb-5 text-xl-bold text-neutral-900'>Sign Up</h1>
         {submitError && (
           <p className='mb-4 text-sm text-red-500'>{submitError}</p>

@@ -73,10 +73,10 @@ export default function Navbar() {
                   Write Post
                 </Link>
               </div>
-              <div className='flex flex-row'>
+              <div className='relative flex flex-row'>
                 <Sheet>
                   <SheetTrigger asChild className='md:hidden'>
-                    <CiSearch className='fixed w-6 h-6 cursor-pointer top-4 right-15' />
+                    <CiSearch className='absolute w-6 h-6 cursor-pointer -top-2 -right-3' />
                   </SheetTrigger>
                   <SheetContent>
                     <div className='flex flex-col items-start p-4'>

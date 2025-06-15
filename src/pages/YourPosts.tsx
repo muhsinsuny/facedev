@@ -14,7 +14,6 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import PostStatistic from './partials/PostStatistic';
 import moment from 'moment';
-// import { api } from '../lib/api';
 
 interface Post {
   id: number;
@@ -89,7 +88,7 @@ export default function YourPosts() {
             <div className='flex flex-col flex-1 md:block'>
               <CardHeader className='flex flex-col items-start'>
                 <CardTitle
-                  onClick={() => navigate(`/update-post/${post.id}`)}
+                  onClick={() => navigate(`/detail/${post.id}`)}
                   className='mb-3 font-bold cursor-pointer text-md-bold hover:text-primary-300 text-neutral-900 hover:cursor-pointer hover:text-xl hover:underline'
                 >
                   {post.title}
@@ -135,7 +134,10 @@ export default function YourPosts() {
                       />
                     </div>
                     <div className='flex'>
-                      <button className='text-primary-300 hover:underline'>
+                      <button
+                        className='text-primary-300 hover:cursor-pointer hover:underline'
+                        onClick={() => navigate(`/update-post/${post.id}`)}
+                      >
                         Edit
                       </button>
                     </div>

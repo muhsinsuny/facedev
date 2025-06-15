@@ -73,6 +73,18 @@ export default function Navbar() {
                   Write Post
                 </Link>
               </div>
+              <div className='flex flex-row'>
+                <Sheet>
+                  <SheetTrigger asChild className='md:hidden'>
+                    <CiSearch className='fixed w-6 h-6 cursor-pointer top-4 right-15' />
+                  </SheetTrigger>
+                  <SheetContent>
+                    <div className='flex flex-col items-start p-4'>
+                      <SearchBox />
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
               <UserDropdown
                 user={{ name: displayName, avatarUrl }}
                 onLogout={handleLogout}

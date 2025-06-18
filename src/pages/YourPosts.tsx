@@ -153,9 +153,17 @@ export default function YourPosts() {
                         }
                         onConfirm={async () => {
                           if (postIdToDelete !== null) {
-                            await deletePost(postIdToDelete);
-                            toast.success('Post deleted');
-                            setPostIdToDelete(null);
+                            try {
+                              await deletePost(postIdToDelete);
+                              toast.success('Post deleted');
+                              setPostIdToDelete(null);
+                              setTimeout(() => {
+                                window.location.reload();
+                              }, 100);
+                            } catch (error) {
+                              console.error('Error deleting post:', error);
+                              toast.error('Failed to delete post');
+                            }
                           }
                         }}
                         onClose={() => setPostIdToDelete(null)}
